@@ -1,0 +1,4 @@
+﻿  fileSystem.cpp
+D:\C++\src\FileSystemWithGit\fileSystem.cpp(214,35): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+D:\C++\src\FileSystemWithGit\fileSystem.cpp(324,31): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+  FileSystem.vcxproj -> D:\C++\src\FileSystemWithGit\x64\Debug\FileSystem.exe
