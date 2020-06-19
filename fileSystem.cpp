@@ -82,26 +82,23 @@ int balloc() //申请空闲盘块
 		}
 		superblock.fbstack[BLK_GROUP_NUM - superblock.fbptr] = -1;
 		superblock.fbptr = 0;
-		for (int i = 0; i < BLK_GROUP_NUM; i++) {
-			int id, num = 0;
-			fstream disk;
-			disk.open("disk.txt", ios::in | ios::out);
-			disk.seekg(BLK_SIZE_TOTAL * temp);
-			for (int i = 0; i < BLK_GROUP_NUM; i++) {
-				disk >> id;
-				num++;
-				if (0 == id) break; //0表示是最后一组
-			}
-			disk.seekg(BLK_SIZE_TOTAL * temp);
-			for (int j = BLK_GROUP_NUM - num; j < BLK_GROUP_NUM; j++) {
-				disk >> id;
-				superblock.fbstack[j] = id;
-			}
-			superblock.fbptr = num;
-			disk.close();
-		}
+		
+		int id, num = 0;
 		fstream disk;
 		disk.open("disk.txt", ios::in | ios::out);
+		disk.seekg(BLK_SIZE_TOTAL * temp);
+		for (int i = 0; i < BLK_GROUP_NUM; i++) {
+			disk >> id;
+			num++;
+			if (0 == id) break; //0表示是最后一组
+		}
+		disk.seekg(BLK_SIZE_TOTAL * temp);
+		for (int j = BLK_GROUP_NUM - num; j < BLK_GROUP_NUM; j++) {
+			disk >> id;
+			superblock.fbstack[j] = id;
+		}
+		superblock.fbptr = num;
+		
 		disk.seekp(BLK_SIZE_TOTAL * temp); //回收盘块号
 		disk << setw(BLK_SIZE) << ' ';
 		disk.close();
