@@ -77,7 +77,7 @@ HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);  // 获取控制台句柄
 
 void initVariable(); //初始化变量
 void Order();  //命令函数
-void format();  //初始化
+int format();  //初始化
 void getPath();  //获取路径
 void Help();  //帮助
 int ialloc();		//申请i节点

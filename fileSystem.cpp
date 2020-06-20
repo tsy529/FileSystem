@@ -1288,6 +1288,7 @@ bool authority(INODE inode)
 	}
 	return false;
 }
+
 //根据路径找到指定文件或目录
 bool find(char* string) 
 {
@@ -1359,7 +1360,7 @@ int guestSignup()
 	char auser_new[8];
 	char apwd1_new[8];
 
-	cout << "   临时User:";
+	cout << "   输入临时Guest:";
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 	cin >> auser_new;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
@@ -1389,49 +1390,58 @@ int guestSignup()
 	user << setw(8) << apwd1_new;
 	user << setw(8) << "guest";
 	user.close();
-	cout << "  游客模式启动，welcome！" << endl;
+	cout << "  <-    FINISH!    ->" << endl;
 	return 1;
 }
 //用户注册
 int userSignup() {
-	char auser2[8];
-	char auser_new[8];
-	char apwd1_new[8];
-
-	cout << "  admin User:";
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-	cin >> auser_new;
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-	fstream user;
-	user.open("user.txt", ios::in | ios::out);
-	int usernum = getUserNum(); //当前用户数量，包括管理员和游客
-	for (int n = 0; n < usernum; n++) {
-		user.seekg(8 + 24 * n);
-		user >> auser2;
-		if (strcmp(auser_new, auser2) == 0) {
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
-			cout << "  用户名已存在" << endl;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-			user.close();
-			return 0;
-		}
+	if (strcmp(auser, "admin")) {
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  当前登陆用户没有权限";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+		return 0;
 	}
-	cout << "  set Psaaword:";
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-	cin >> apwd1_new;
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-	usernum++;
-	user.seekg(0);
-	user << setw(8) << usernum; //初始化时先确定用户个数
-	user.seekg(8 + 24 * (usernum - 1));
-	user << setw(8) << auser_new;
-	user << setw(8) << apwd1_new;
-	user << setw(8) << "su";
-	user.close();
-	mkdir(auser_new, auser_new);
-	cout << "\n   <-     已注册新用户" << auser_new << "    ->" << endl;
-	return 1;
+	else {
+		char auser2[8];
+		char auser_new[8];
+		char apwd1_new[8];
+
+		cout << "  admin User:";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+		cin >> auser_new;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+		fstream user;
+		user.open("user.txt", ios::in | ios::out);
+		int usernum = getUserNum(); //当前用户数量，包括管理员和游客
+		for (int n = 0; n < usernum; n++) {
+			user.seekg(8 + 24 * n);
+			user >> auser2;
+			if (strcmp(auser_new, auser2) == 0) {
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  用户名已存在" << endl;
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				user.close();
+				return 0;
+			}
+		}
+		cout << "  set Psaaword:";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+		cin >> apwd1_new;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+		usernum++;
+		user.seekg(0);
+		user << setw(8) << usernum; //初始化时先确定用户个数
+		user.seekg(8 + 24 * (usernum - 1));
+		user << setw(8) << auser_new;
+		user << setw(8) << apwd1_new;
+		user << setw(8) << "su";
+		user.close();
+		mkdir(auser_new, auser_new);
+		cout << "\n   <-     已注册新用户" << auser_new << "    ->" << endl;
+		return 1;
+	}
 }
+
 //登录
 int login(char userword[]) 
 {
@@ -1443,7 +1453,7 @@ int login(char userword[])
 	}*/
 	memset(auser, 0, sizeof(auser) / sizeof(char));
 	strcpy(auser ,userword);
-	cout << "   Password: ";
+	cout << "       Password: ";
 	SetConsoleTextAttribute(handle, 0);
 	cin >> apwd;
 	SetConsoleTextAttribute(handle, 10);
@@ -1461,7 +1471,7 @@ int login(char userword[])
 		if ((!a) && (!b)) {
 			have = true;
 			user >> agroup;
-			if (agroup == "su")
+			if (!strcmp(agroup, "su"))
 			{
 				//cout << " --------------- Welcome, administrator---------------- ";
 			}
@@ -1542,14 +1552,14 @@ void Order()
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			copy(string);
 		}
-		if (!strcmp(commond, "rmfile")) {
+		if (!strcmp(commond, "delete")) {
 			have = true;
 			char filename[FILE_NAME_SIZE];
 			cin >> filename;
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			rmfile(filename);
 		}
-		if (!strcmp(commond, "show")) {
+		if (!strcmp(commond, "open")) {
 			have = true;
 			char filename[FILE_NAME_SIZE];
 			cin >> filename;
@@ -1573,22 +1583,14 @@ void Order()
 			cout << "  User " << auser << "log out\n";
 			int times = 0;
 			char in_up[8] = {'\0'};
-			cout << "  若无用户，输入####进入游客模式" << endl;
+			cout << "  输入####进入游客模式" << endl;
 			cout << "       User:";
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 			cin >> in_up;
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-			if (in_up == "####") {
-				while (!guestSignup()) {
-					cout << "  重新输入注册临时User\n已有账号，则输入->login\n";
-					cout << "   user->";
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-					cin >> in_up;
-					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-					if (in_up == "login") break;
-				}
-				cout << "  <-LOGIN->" << endl;
-				cout << "       User:";
+			if (!strcmp(in_up, "####")) {
+				cout << "  <-        LOGIN        ->" << endl;
+				cout << "       Guest:";
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 				cin >> in_up;
 				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
@@ -1613,8 +1615,9 @@ void Order()
 		if (!strcmp(commond, "reset")) {
 			have = true;
 			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-			format();
-			cout << "  FOS 还原一新！";
+			if (format()) {
+				cout << "  FOS 还原一新！";
+			}
 		}
 		if (!strcmp(commond, "help")) {
 			have = true;
@@ -1671,82 +1674,91 @@ void getPath()
 	}
 }
 //初始化
-void format() 
+int format() 
 {
-	fstream user; //初始化；；读文件流到user中，利用user实现对文件的读写
-	user.open("user.txt", ios::in | ios::out);
-	int usernum = 1;
-	user << setw(8) << usernum; //初始化时先确定用户个数；；重载<<，将8个空格和usernum写到文件中去
-	user << setw(8) << "admin";
-	user << setw(8) << "123";
-	user << setw(8) << "su"; //超级管理员
-	int i;
-	for (i = 0; i < DISK_MAX_NUM; i++) {
-		user << setw(BLK_SIZE) << ' '; //把512个空格写入user
-		user << '\n';
-	}
-	user.close();
-	fstream disk;
-	disk.open("disk.txt", ios::in | ios::out);
-	if (!disk.is_open()) //加了.is_open()检查文件是否打开成功
-	{
+	if (strcmp(auser,"admin")) {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
-		cout << "  当前磁盘不可用!\n";
+		cout << "  当前登陆用户没有权限";
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-		exit(1);
+		return 0;
 	}
-	for (i = 0; i < DISK_MAX_NUM; i++) {
-		disk << setw(BLK_SIZE) << ' '; //把100*512个空格写入disk
-		disk << '\n';
-	}
-	disk.seekp(0);
-	//改变读入位置f.seekg(0, ios::beg); 一参数偏移量offset(long）二参数offset相对位置，三个值：  ios::beg -- 文件头    ios::end -- 文件尾    ios::cur -- 当前位置
-	disk << setw(INODE_NUM_SIZE) << -1; //第一个i节点给根目录使用
-	superblock.fistack[0] = -1;
-	for (i = 1; i < FREE_INODE_MAX_NUM; i++) {
-		disk << setw(INODE_NUM_SIZE) << i;
-		superblock.fistack[i] = i;
-	}
-	disk << setw(INODE_NUM_SIZE) << FREE_INODE_MAX_NUM - 1;
-	superblock.fiptr = FREE_INODE_MAX_NUM - 1;
-	for (i = 0; i < 10; i++) {
-		disk << setw(BLK_NUM_SIZE) << i + 12;
-		superblock.fbstack[i] = i + 12;
-	}
-	disk << setw(BLK_NUM_SIZE) << 10; //组内空闲盘块数
-	superblock.fbptr = 10;
-	disk << setw(BLK_NUM_SIZE) << 80; //总空闲i节点数
-	disk << setw(BLK_NUM_SIZE) << 89; //总空闲盘块数
-	//初始化根目录i节点
-	disk.seekp(BLK_SIZE_TOTAL); //来到盘块1
-	disk << setw(6) << 0; //当前根目录大小0
-	disk << setw(6) << 1; //占用1个磁盘块
-	disk << setw(BLK_NUM_SIZE) << 11; //addr[0] = 块号为11
-	disk << setw(BLK_NUM_SIZE) << 0; //addr[1]
-	disk << setw(BLK_NUM_SIZE) << 0; //addr[2]
-	disk << setw(BLK_NUM_SIZE) << 0; //addr[3]
-	disk << setw(BLK_NUM_SIZE) << 0; //addr1
-	disk << setw(BLK_NUM_SIZE) << 0; //addr2
-	disk << setw(USER_NAME_SIZE) << "admin"; //创建者admin
-	disk << setw(USER_GROUP_SIZE) << "su"; //创建者权限所属组为su
-	disk << setw(FILE_MODE_SIZE) << "dir"; //类型为目录
-	char tmpbuf[TIME_SIZE];
-	_strtime(tmpbuf); //获取当前系统的时间
-	disk << setw(TIME_SIZE) << tmpbuf;
-	for (i = 21; i < DISK_MAX_NUM; i++) //给剩余空闲磁盘块分组
-	{
-		if (i % BLK_GROUP_NUM == 1) {
-			disk.seekp(BLK_SIZE_TOTAL * i);
-			for (int j = 0; j < 10; j++) {
-				int temp = i + j + 1;
-				if (temp < DISK_MAX_NUM) {
-					disk << setw(BLK_NUM_SIZE) << temp;
+	else {
+		fstream user; //初始化；；读文件流到user中，利用user实现对文件的读写
+		user.open("user.txt", ios::in | ios::out);
+		int usernum = 1;
+		user << setw(8) << usernum; //初始化时先确定用户个数；；重载<<，将8个空格和usernum写到文件中去
+		user << setw(8) << "admin";
+		user << setw(8) << "123";
+		user << setw(8) << "su"; //超级管理员
+		int i;
+		for (i = 0; i < DISK_MAX_NUM; i++) {
+			user << setw(BLK_SIZE) << ' '; //把512个空格写入user
+			user << '\n';
+		}
+		user.close();
+		fstream disk;
+		disk.open("disk.txt", ios::in | ios::out);
+		if (!disk.is_open()) //加了.is_open()检查文件是否打开成功
+		{
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  当前磁盘不可用!\n";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			exit(1);
+		}
+		for (i = 0; i < DISK_MAX_NUM; i++) {
+			disk << setw(BLK_SIZE) << ' '; //把100*512个空格写入disk
+			disk << '\n';
+		}
+		disk.seekp(0);
+		//改变读入位置f.seekg(0, ios::beg); 一参数偏移量offset(long）二参数offset相对位置，三个值：  ios::beg -- 文件头    ios::end -- 文件尾    ios::cur -- 当前位置
+		disk << setw(INODE_NUM_SIZE) << -1; //第一个i节点给根目录使用
+		superblock.fistack[0] = -1;
+		for (i = 1; i < FREE_INODE_MAX_NUM; i++) {
+			disk << setw(INODE_NUM_SIZE) << i;
+			superblock.fistack[i] = i;
+		}
+		disk << setw(INODE_NUM_SIZE) << FREE_INODE_MAX_NUM - 1;
+		superblock.fiptr = FREE_INODE_MAX_NUM - 1;
+		for (i = 0; i < 10; i++) {
+			disk << setw(BLK_NUM_SIZE) << i + 12;
+			superblock.fbstack[i] = i + 12;
+		}
+		disk << setw(BLK_NUM_SIZE) << 10; //组内空闲盘块数
+		superblock.fbptr = 10;
+		disk << setw(BLK_NUM_SIZE) << 80; //总空闲i节点数
+		disk << setw(BLK_NUM_SIZE) << 89; //总空闲盘块数
+		//初始化根目录i节点
+		disk.seekp(BLK_SIZE_TOTAL); //来到盘块1
+		disk << setw(6) << 0; //当前根目录大小0
+		disk << setw(6) << 1; //占用1个磁盘块
+		disk << setw(BLK_NUM_SIZE) << 11; //addr[0] = 块号为11
+		disk << setw(BLK_NUM_SIZE) << 0; //addr[1]
+		disk << setw(BLK_NUM_SIZE) << 0; //addr[2]
+		disk << setw(BLK_NUM_SIZE) << 0; //addr[3]
+		disk << setw(BLK_NUM_SIZE) << 0; //addr1
+		disk << setw(BLK_NUM_SIZE) << 0; //addr2
+		disk << setw(USER_NAME_SIZE) << "admin"; //创建者admin
+		disk << setw(USER_GROUP_SIZE) << "su"; //创建者权限所属组为su
+		disk << setw(FILE_MODE_SIZE) << "dir"; //类型为目录
+		char tmpbuf[TIME_SIZE];
+		_strtime(tmpbuf); //获取当前系统的时间
+		disk << setw(TIME_SIZE) << tmpbuf;
+		for (i = 21; i < DISK_MAX_NUM; i++) //给剩余空闲磁盘块分组
+		{
+			if (i % BLK_GROUP_NUM == 1) {
+				disk.seekp(BLK_SIZE_TOTAL * i);
+				for (int j = 0; j < 10; j++) {
+					int temp = i + j + 1;
+					if (temp < DISK_MAX_NUM) {
+						disk << setw(BLK_NUM_SIZE) << temp;
+					}
 				}
 			}
 		}
+		disk << setw(BLK_NUM_SIZE) << 0;
+		disk.close();
+		return 1;
 	}
-	disk << setw(BLK_NUM_SIZE) << 0;
-	disk.close();
 }
 void orderhelp()
 {
@@ -1760,10 +1772,10 @@ void orderhelp()
 	cout << "      5.pwd----------------显示当前目录\n";
 	cout << "      6.crt----------------建立文件\n";
 	cout << "      7.crta---------------建立(auto)文件\n";
-	cout << "      8.rmfile-------------删除文件\n";
+	cout << "      8.delete-------------删除文件\n";
 	cout << "      9.write--------------追加文件\n";
 	cout << "      10.copy--------------复制文件\n";
-	cout << "      11.show--------------显示文件内容\n";
+	cout << "      11.open--------------显示文件内容\n";
 	cout << "      12.reset-------------系统重置\n";
 	cout << "      13.logout------------注销登录\n";
 	cout << "      14.useradd-----------创建管理员\n";
@@ -1791,10 +1803,10 @@ void Help()
 	cout << "  5.pwd：直接使用,如\"pwd\"显示当前目录 \n\n";
 	cout << "  6.crt：crt+空格+文件名，如\"crt f1\",在当前目录下建立文件f1，手动添加文件大小\n\n";
 	cout << "  7.crta：crta+空格+文件名，如\"crta f1\",在当前目录下建立文件f1,自动匹配输入大小\n\n";
-	cout << "  8.rmfile：rmfile+空格+文件名，如\"rmfile f1\",删除当前目录下的文件f1\n\n";
+	cout << "  8.delete：rmfile+空格+文件名，如\"rmfile f1\",删除当前目录下的文件f1\n\n";
 	cout << "  9.write: write+空格+文件名，如\"write f1\",在文件f1内容后继续添加文字\n\n";
 	cout << "  10.copy: copy+空格+路径，如\"copy root\\d1\\f1\",在当前目录下建立与文件f1相同的文件\n\n";
-	cout << "  11.show：show+空格+文件名，如\"show f1\",显示文件f1的内容\n\n";
+	cout << "  11.open：show+空格+文件名，如\"show f1\",显示文件f1的内容\n\n";
 	cout << "  12.logout: 直接使用，退出当前账户\n\n";
 	cout << "  13.reset：直接使用，功能是将系统重置到初始状态\n\n";
 	cout << "  14.useradd：直接使用，功能是创建新管理员\n\n";
@@ -1813,20 +1825,13 @@ void UI() {
 	int times = 0;
 	char in_up[8] = {'\0'};
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-	cout << "  若无用户，输入####进入游客模式" << endl;
+	cout << "  输入####进入游客模式" << endl;
 	cout << "       User:";
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 	cin >> in_up;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-	if (in_up == "####") {
-		while (!guestSignup()) {
-			cout << "  重新输入注册临时User\n已有账号，则输入->login\n";
-			cout << "   user->";
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
-			cin >> in_up;
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-			if (in_up == "login") break;
-		}
+	if (!strcmp(in_up, "####")) {
+		while (!guestSignup()) {}
 		cout << "  <-    LOGIN    ->" << endl;
 		cout << "       User:";
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
@@ -1844,7 +1849,7 @@ void UI() {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 		cin >> in_up;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
-		if (in_up == "exitos") exit(0);
+		if (!strcmp(in_up, "exitos")) exit(0);
 	}
 	cout << "  <-      Login success!    ->" << endl;
 	cout << "  Welcome " << auser << endl;
