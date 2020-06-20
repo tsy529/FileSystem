@@ -18,6 +18,13 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="fileSystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="File.h" />
+    <ClInclude Include="fileSystem.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{7992DBA5-FC45-4BCC-A1D0-15F098DC46C2}</ProjectGuid>
@@ -139,12 +146,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="fileSystem.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="fileSystem.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

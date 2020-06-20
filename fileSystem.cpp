@@ -1,9 +1,14 @@
 #include "fileSystem.h"
 
-int ialloc() //ÉêÇëÒ»¸öi½Úµã
+void initVariable() {
+	strcpy(curname, "root");
+	path[0] = 0;
+	num = 1;
+}
+//ÉêÇëÒ»¸öi½Úµã
+int ialloc() 
 {
-	//ÓÐ¿ÕÏÐi½áµã£¬´ÓÐ¡µ½´ó·ÖÅä£¬·µ»Ø±àºÅ£¬
-	//-1
+	//ÓÐ¿ÕÏÐi½áµã£¬´ÓÐ¡µ½´ó·ÖÅä£¬·µ»Ø±àºÅ-1
 	if (superblock.fiptr > 0) {
 		int temp = superblock.fistack[FREE_INODE_MAX_NUM - superblock.fiptr]; //i½Úµãµ±Ç°¿ÉÓÃ
 		superblock.fistack[FREE_INODE_MAX_NUM - superblock.fiptr] = -1;
@@ -12,8 +17,8 @@ int ialloc() //ÉêÇëÒ»¸öi½Úµã
 	}
 	return -1;
 }
-
-void ifree(int index) //¹é»¹i½Úµã
+//¹é»¹i½Úµã
+void ifree(int index) 
 {
 	fstream disk;
 	disk.open("disk.txt", ios::in | ios::out); //´ò¿ªÎÄ¼þ
@@ -33,8 +38,8 @@ void ifree(int index) //¹é»¹i½Úµã
 	}
 	superblock.fiptr++;
 }
-
-void readInode(int index, INODE& inode) //¶Ái½ÚµãÐÅÏ¢
+//¶Ái½ÚµãÐÅÏ¢
+void readInode(int index, INODE& inode) 
 {
 	fstream disk;
 	disk.open("disk.txt", ios::in | ios::out); //´ò¿ªÎÄ¼þ
@@ -51,8 +56,8 @@ void readInode(int index, INODE& inode) //¶Ái½ÚµãÐÅÏ¢
 	disk >> inode.ctime;
 	disk.close();
 }
-
-void writeInode(INODE inode, int index) //Ð´i½Úµã
+//Ð´i½Úµã
+void writeInode(INODE inode, int index) 
 {
 	fstream disk;
 	disk.open("disk.txt", ios::in | ios::out);
@@ -71,8 +76,8 @@ void writeInode(INODE inode, int index) //Ð´i½Úµã
 	//disk << setw(10) << inode.ctime;
 	disk.close();
 }
-
-int balloc() //ÉêÇë¿ÕÏÐÅÌ¿é
+//ÉêÇë¿ÕÏÐÅÌ¿é
+int balloc() 
 {
 	int temp = superblock.fbstack[10 - superblock.fbptr];
 	if (1 == superblock.fbptr) //Õ»Âú
@@ -82,7 +87,7 @@ int balloc() //ÉêÇë¿ÕÏÐÅÌ¿é
 		}
 		superblock.fbstack[BLK_GROUP_NUM - superblock.fbptr] = -1;
 		superblock.fbptr = 0;
-		
+
 		int id, num = 0;
 		fstream disk;
 		disk.open("disk.txt", ios::in | ios::out);
@@ -98,7 +103,7 @@ int balloc() //ÉêÇë¿ÕÏÐÅÌ¿é
 			superblock.fbstack[j] = id;
 		}
 		superblock.fbptr = num;
-		
+
 		disk.seekp(BLK_SIZE_TOTAL * temp); //»ØÊÕÅÌ¿éºÅ
 		disk << setw(BLK_SIZE) << ' ';
 		disk.close();
@@ -109,8 +114,8 @@ int balloc() //ÉêÇë¿ÕÏÐÅÌ¿é
 	superblock.fbptr--;
 	return temp;
 }
-
-void bfree(int index) //»ØÊÕÐÂÊÍ·ÅµÄÅÌ¿é
+//»ØÊÕÐÂÊÍ·ÅµÄÅÌ¿é
+void bfree(int index) 
 {
 	fstream disk;
 	disk.open("disk.txt", ios::in | ios::out);
@@ -131,8 +136,8 @@ void bfree(int index) //»ØÊÕÐÂÊÍ·ÅµÄÅÌ¿é
 	superblock.fbstack[10 - superblock.fbptr - 1] = index; //´ý»ØÊÕÅÌºÅÈëÕ»
 	superblock.fbptr++;
 }
-
-void readsupblk() //¶Á³¬¼¶¿é£»£»£»ÎÄ¼þ¾íÖÐµÚÒ»¿é¾ÍÊÇ³¬¼¶¿ì¡£¿é´óÐ¡Ó¦¸Ã´ÓinitialÖÐÍÆÖª£¬Ó¦Î´Õ¼Âú
+//¶Á³¬¼¶¿é£»£»£»ÎÄ¼þ¾íÖÐµÚÒ»¿é¾ÍÊÇ³¬¼¶¿ì¡£¿é´óÐ¡Ó¦¸Ã´ÓinitialÖÐÍÆÖª£¬Ó¦Î´Õ¼Âú
+void readsupblk() 
 {
 	fstream disk;
 	disk.open("disk.txt", ios::in | ios::out);
@@ -149,8 +154,8 @@ void readsupblk() //¶Á³¬¼¶¿é£»£»£»ÎÄ¼þ¾íÖÐµÚÒ»¿é¾ÍÊÇ³¬¼¶¿ì¡£¿é´óÐ¡Ó¦¸Ã´ÓinitialÖ
 	disk >> superblock.bnum;
 	disk.close();
 }
-
-void writesupblk() //Ð´³¬¼¶¿é
+//Ð´³¬¼¶¿é
+void writesupblk() 
 {
 	fstream disk;
 	disk.open("disk.txt", ios::in | ios::out);
@@ -167,8 +172,8 @@ void writesupblk() //Ð´³¬¼¶¿é
 	disk << setw(BLK_NUM_SIZE) << superblock.bnum;
 	disk.close();
 }
-
-void readdir(INODE inode, int index, DIR& dir) //¶ÁÄ¿Â¼
+//¶ÁÄ¿Â¼
+void readdir(INODE inode, int index, DIR& dir) 
 {
 	fstream disk;
 	disk.open("disk.txt", ios::in | ios::out);
@@ -178,8 +183,8 @@ void readdir(INODE inode, int index, DIR& dir) //¶ÁÄ¿Â¼
 	disk >> dir.parfname;
 	disk >> dir.parindex;
 }
-
-void writedir(INODE inode, DIR dir, int index) //Ð´Ä¿Â¼
+//Ð´Ä¿Â¼
+void writedir(INODE inode, DIR dir, int index) 
 {
 	fstream disk;
 	disk.open("disk.txt", ios::in | ios::out);
@@ -191,7 +196,8 @@ void writedir(INODE inode, DIR dir, int index) //Ð´Ä¿Â¼
 	disk.close();
 }
 
-void mkfile(char* filename, char* content) //´´½¨ÎÄ¼þ
+//´´½¨ÎÄ¼þ
+void crtfile(char* filename, char* content)
 {
 	INODE inode, inode2;
 	readInode(path[num - 1], inode); //¶Ái½áµãÐÅÏ¢
@@ -199,20 +205,32 @@ void mkfile(char* filename, char* content) //´´½¨ÎÄ¼þ
 	{
 		if (BLK_SIZE - inode.fsize < DIR_SIZE) //Ä¿Â¼ÏîÒÑ´ïµ½×î¶à14¸ö
 		{
-			cout << "µ±Ç°Ä¿Â¼ÒÑÂú£¬´´½¨ÎÄ¼þÊ§°Ü£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  µ±Ç°Ä¿Â¼ÒÑÂú£¬´´½¨ÎÄ¼þÊ§°Ü£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 		else {
 			int i, index2;
 			if (ISsame(filename, inode, i, index2)) //
 			{
-				cout << "ÎÄ¼þÒÑ´æÔÚ£¬´´½¨Ê§°Ü£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  ÎÄ¼þÒÑ´æÔÚ£¬´´½¨Ê§°Ü£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			}
 			else {
+				cout << "  ÇëÊäÈëÎÄ¼þÄÚÈÝ£º";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+				cin >> content;
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				int size = strlen(content) + 1;
-				cout << "ÇëÊäÈëÎÄ¼þ´óÐ¡£¨1~2048b)£º";
+				cout << "  ÇëÊäÈëÎÄ¼þ´óÐ¡£¨1~2048B)£º";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 				cin >> size;
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				if (size > FILE_CONTENT_MAX_SIZE) {
-					cout << "Ëù´´½¨µÄÎÄ¼þÄÚÈÝ¹ý³¤£¬´´½¨Ê§°Ü£¡";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+					cout << "  Ëù´´½¨µÄÎÄ¼þÄÚÈÝ¹ý³¤£¬´´½¨Ê§°Ü£¡";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				}
 				else {
 					int bnum = (size - 1) / BLK_SIZE + 1; //¼ÆËãÅÌ¿ìÊý
@@ -223,7 +241,9 @@ void mkfile(char* filename, char* content) //´´½¨ÎÄ¼þ
 						for (int i = 0; i < bnum; i++) {
 							bid[i] = balloc();
 							if (-1 == bid[i]) {
-								cout << "¿ÕÏÐÅÌ¿é²»¹»£¬´´½¨ÎÄ¼þÊ§°Ü£¡";
+								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+								cout << "  ¿ÕÏÐÅÌ¿é²»¹»£¬´´½¨ÎÄ¼þÊ§°Ü£¡";
+								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 								success = false;
 								ifree(iid);
 								for (int j = i - 1; j >= 0; j--) {
@@ -286,24 +306,275 @@ void mkfile(char* filename, char* content) //´´½¨ÎÄ¼þ
 								size = size - BLK_SIZE;
 							}
 							disk.close();
-							cout << "ÎÄ¼þÒÑ³É¹¦´´½¨£¡";
+							cout << "  ÎÄ¼þ"<<filename<<" ÒÑ³É¹¦´´½¨£¡";
 						}
 					}
 					else {
-						cout << "½ÚµãÒÑ¾­ÓÃÍê£¬´´½¨Êý¾ÝÎÄ¼þÊ§°Ü£¡";
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+						cout << "  ½ÚµãÒÑ¾­ÓÃÍê£¬´´½¨Êý¾ÝÎÄ¼þÊ§°Ü£¡";
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 					}
 				}
 			}
 		}
 	}
 	else {
-		cout << "Ã»ÓÐÈ¨ÏÞ";
+		cout << "  Ã»ÓÐÈ¨ÏÞ";
+	}
+	writesupblk(); //Ð´³¬¼¶¿ì
+	writeInode(inode, path[num - 1]); //Ð´i½áµã
+}
+//Æ¥Åä´óÐ¡´´½¨
+void crtfileAutoloc(char* filename, char* content)
+{
+	INODE inode, inode2;
+	readInode(path[num - 1], inode); //¶Ái½áµãÐÅÏ¢
+	if (authority(inode)) //ÅÐ¶ÏÈ¨ÏÞ
+	{
+		if (BLK_SIZE - inode.fsize < DIR_SIZE) //Ä¿Â¼ÏîÒÑ´ïµ½×î¶à14¸ö
+		{
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  µ±Ç°Ä¿Â¼ÒÑÂú£¬´´½¨ÎÄ¼þÊ§°Ü£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+		}
+		else {
+			int i, index2;
+			if (ISsame(filename, inode, i, index2)) //
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  ÎÄ¼þÒÑ´æÔÚ£¬´´½¨Ê§°Ü£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			}
+			else {
+				cout << "  ÇëÊäÈëÎÄ¼þÄÚÈÝ£º";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+				cin >> content;
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				int size = strlen(content) + 1;
+				if (size > FILE_CONTENT_MAX_SIZE) {
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+					cout << "  Ëù´´½¨µÄÎÄ¼þÄÚÈÝ¹ý³¤£¬´´½¨Ê§°Ü£¡";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				}
+				else {
+					int bnum = (size - 1) / BLK_SIZE + 1; //¼ÆËãÅÌ¿ìÊý
+					int bid[DIRECT_ADR_NUM];
+					int iid = ialloc();
+					if (iid != -1) {
+						bool success = true;
+						for (int i = 0; i < bnum; i++) {
+							bid[i] = balloc();
+							if (-1 == bid[i]) {
+								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+								cout << "  ¿ÕÏÐÅÌ¿é²»¹»£¬´´½¨ÎÄ¼þÊ§°Ü£¡";
+								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+								success = false;
+								ifree(iid);
+								for (int j = i - 1; j >= 0; j--) {
+									bfree(bid[j]);
+								}
+								break;
+							}
+						}
+						if (success) {
+							fstream disk;
+							disk.open("disk.txt", ios::in | ios::out);
+							disk.seekp(BLK_SIZE_TOTAL * inode.addr[0] + inode.fsize);
+							disk << setw(FILE_NAME_SIZE) << filename; //ÎÄ¼þÃû
+							disk << setw(INODE_NUM_SIZE) << iid; //i½áµãºÅ
+							disk << setw(FILE_NAME_SIZE) << curname; //Ä¿Â¼Ãû
+							disk << setw(BLK_NUM_SIZE) << path[num - 1]; //²ãÊý
+							disk.close();
+							inode.fsize += DIR_SIZE;
+							char tmpbuf[TIME_SIZE];
+							_strtime(tmpbuf);
+							strcpy(inode.ctime, tmpbuf);
+							inode2.fsize = size;
+							inode2.fbnum = bnum;
+							int i;
+							for (i = 0; i < DIRECT_ADR_NUM; i++) //Ñ­»·¶¨ÒåËÄ¸öÅÌ¿éÐÅÏ¢
+							{
+								if (i < bnum) {
+									inode2.addr[i] = bid[i];
+								}
+								else
+									inode2.addr[i] = 0;
+							}
+							inode2.addr1 = 0;
+							inode2.addr2 = 0;
+							strcpy(inode2.ower, auser);
+							strcpy(inode2.grouper, agroup);
+							strcpy(inode2.mode, "file");
+							_strtime(tmpbuf);
+							strcpy(inode2.ctime, tmpbuf);
+							writeInode(inode2, iid);
+							char temp;
+							disk.open("disk.txt", ios::in | ios::out);
+							int cnum = 0;
+							while (content[cnum] != '\0') //¼ÆËãÄÚÈÝ´óÐ¡
+							{
+								cnum++;
+							}
+							for (int i = 0; i < bnum; i++) //½«ÎÄ¼þÄÚÈÝÐ´ÈëËÄ¸öÅÌ¿é
+							{
+								disk.seekp(BLK_SIZE_TOTAL * bid[i]);
+								for (int j = 0; (j < BLK_SIZE) && (j < size); j++) {
+									if ((j + i * BLK_SIZE) < cnum) {
+										temp = content[j + i * BLK_SIZE];
+										disk << temp;
+									}
+									else {
+										disk << '*';
+									}
+								}
+								size = size - BLK_SIZE;
+							}
+							disk.close();
+							cout << "  ÎÄ¼þ" << filename << " ÒÑ³É¹¦´´½¨£¡";
+						}
+					}
+					else {
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+						cout << "  ½ÚµãÒÑ¾­ÓÃÍê£¬´´½¨Êý¾ÝÎÄ¼þÊ§°Ü£¡";
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+					}
+				}
+			}
+		}
+	}
+	else {
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  µ±Ç°µÇÂ½ÓÃ»§Ã»ÓÐÈ¨ÏÞ";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	}
+	writesupblk(); //Ð´³¬¼¶¿ì
+	writeInode(inode, path[num - 1]); //Ð´i½áµã
+}
+//×Ô¶¯´´½¨
+void crtfileAuto(char* filename, char* content)
+{
+	INODE inode, inode2;
+	readInode(path[num - 1], inode); //¶Ái½áµãÐÅÏ¢
+	if (authority(inode)) //ÅÐ¶ÏÈ¨ÏÞ
+	{
+		if (BLK_SIZE - inode.fsize < DIR_SIZE) //Ä¿Â¼ÏîÒÑ´ïµ½×î¶à14¸ö
+		{
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  µ±Ç°Ä¿Â¼ÒÑÂú£¬´´½¨ÎÄ¼þÊ§°Ü£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+		}
+		else {
+			int i, index2;
+			if (ISsame(filename, inode, i, index2)) //
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  ÎÄ¼þ:"<< filename<<" ÒÑ´æÔÚ£¬´´½¨Ê§°Ü£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			}
+			else {
+				int size = strlen(content) + 1;
+				if (size > FILE_CONTENT_MAX_SIZE) {
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+					cout << "  Ëù´´½¨µÄÎÄ¼þÄÚÈÝ¹ý³¤£¬´´½¨Ê§°Ü£¡";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				}
+				else {
+					int bnum = (size - 1) / BLK_SIZE + 1; //¼ÆËãÅÌ¿ìÊý
+					int bid[DIRECT_ADR_NUM];
+					int iid = ialloc();
+					if (iid != -1) {
+						bool success = true;
+						for (int i = 0; i < bnum; i++) {
+							bid[i] = balloc();
+							if (-1 == bid[i]) {
+								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+								cout << "  ¿ÕÏÐÅÌ¿é²»¹»£¬´´½¨ÎÄ¼þÊ§°Ü£¡";
+								SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+								success = false;
+								ifree(iid);
+								for (int j = i - 1; j >= 0; j--) {
+									bfree(bid[j]);
+								}
+								break;
+							}
+						}
+						if (success) {
+							fstream disk;
+							disk.open("disk.txt", ios::in | ios::out);
+							disk.seekp(BLK_SIZE_TOTAL * inode.addr[0] + inode.fsize);
+							disk << setw(FILE_NAME_SIZE) << filename; //ÎÄ¼þÃû
+							disk << setw(INODE_NUM_SIZE) << iid; //i½áµãºÅ
+							disk << setw(FILE_NAME_SIZE) << curname; //Ä¿Â¼Ãû
+							disk << setw(BLK_NUM_SIZE) << path[num - 1]; //²ãÊý
+							disk.close();
+							inode.fsize += DIR_SIZE;
+							char tmpbuf[TIME_SIZE];
+							_strtime(tmpbuf);
+							strcpy(inode.ctime, tmpbuf);
+							inode2.fsize = size;
+							inode2.fbnum = bnum;
+							int i;
+							for (i = 0; i < DIRECT_ADR_NUM; i++) //Ñ­»·¶¨ÒåËÄ¸öÅÌ¿éÐÅÏ¢
+							{
+								if (i < bnum) {
+									inode2.addr[i] = bid[i];
+								}
+								else
+									inode2.addr[i] = 0;
+							}
+							inode2.addr1 = 0;
+							inode2.addr2 = 0;
+							strcpy(inode2.ower, auser);
+							strcpy(inode2.grouper, agroup);
+							strcpy(inode2.mode, "file");
+							_strtime(tmpbuf);
+							strcpy(inode2.ctime, tmpbuf);
+							writeInode(inode2, iid);
+							char temp;
+							disk.open("disk.txt", ios::in | ios::out);
+							int cnum = 0;
+							while (content[cnum] != '\0') //¼ÆËãÄÚÈÝ´óÐ¡
+							{
+								cnum++;
+							}
+							for (int i = 0; i < bnum; i++) //½«ÎÄ¼þÄÚÈÝÐ´ÈëËÄ¸öÅÌ¿é
+							{
+								disk.seekp(BLK_SIZE_TOTAL * bid[i]);
+								for (int j = 0; (j < BLK_SIZE) && (j < size); j++) {
+									if ((j + i * BLK_SIZE) < cnum) {
+										temp = content[j + i * BLK_SIZE];
+										disk << temp;
+									}
+									else {
+										disk << '*';
+									}
+								}
+								size = size - BLK_SIZE;
+							}
+							disk.close();
+							cout << "  ÎÄ¼þ" << filename << " ÒÑ³É¹¦´´½¨£¡";
+						}
+					}
+					else {
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+						cout << "  ½ÚµãÒÑ¾­ÓÃÍê£¬´´½¨Êý¾ÝÎÄ¼þÊ§°Ü£¡";
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+					}
+				}
+			}
+		}
+	}
+	else {
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  µ±Ç°µÇÂ½ÓÃ»§Ã»ÓÐÈ¨ÏÞ";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	}
 	writesupblk(); //Ð´³¬¼¶¿ì
 	writeInode(inode, path[num - 1]); //Ð´i½áµã
 }
 
-void write(char* filename, char* content) //×·¼ÓÎÄ¼þÄÚÈÝ
+//×·¼ÓÎÄ¼þÄÚÈÝ
+void writefile(char* filename, char* content)
 {
 	INODE inode, inode2;
 	readInode(path[num - 1], inode); //¶Ái½áµã
@@ -312,15 +583,23 @@ void write(char* filename, char* content) //×·¼ÓÎÄ¼þÄÚÈÝ
 		int i, index2;
 		if (!ISsame(filename, inode, i, index2)) //²é¿´ÎÄ¼þÃûÊÇ·ñ´æÔÚ
 		{
-			cout << "ÎÄ¼þ²»´æÔÚ";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  ÎÄ¼þÃû²»´æÔÚ";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 		else {
 			readInode(index2, inode2);
 			if (inode2.mode[0] == 'f') //¿´ÊÇ·ñÊÇÎÄ¼þ
 			{
+				cout << "    ÇëÊäÈëÎÄ¼þÄÚÈÝ£º";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+				cin >> content;
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				int size = strlen(content);
 				if ((size + inode2.fsize) > FILE_CONTENT_MAX_SIZE) {
-					cout << "ÎÄ¼þÄÚÈÝ¹ý³¤";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+					cout << "  ×·¼ÓÎÄ¼þÄÚÈÝ¹ý³¤";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				}
 				else {
 					int bnum = (size + inode2.fsize - 1) / BLK_SIZE + 1; //¼ÆËãÅÌ¿ìÊý
@@ -332,7 +611,9 @@ void write(char* filename, char* content) //×·¼ÓÎÄ¼þÄÚÈÝ
 					for (int i = inode2.fbnum; i < bnum; i++) {
 						bid[i] = balloc();
 						if (-1 == bid[i]) {
-							cout << "¿ÕÏÐÅÌ¿é²»¹»";
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+							cout << "  ¿ÕÏÐÅÌ¿é²»¹»";
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 							success = false;
 							for (int j = i - 1; j >= inode2.fbnum; j--) {
 								bfree(bid[j]);
@@ -362,7 +643,7 @@ void write(char* filename, char* content) //×·¼ÓÎÄ¼þÄÚÈÝ
 						inode2.addr2 = 0;
 						strcpy(inode2.ower, auser);
 						strcpy(inode2.grouper, agroup);
-						strcpy(inode2.mode, "file2");
+						strcpy(inode2.mode, "file");
 						_strtime(tmpbuf);
 						strcpy(inode2.ctime, tmpbuf);
 						writeInode(inode2, index2);
@@ -394,23 +675,28 @@ void write(char* filename, char* content) //×·¼ÓÎÄ¼þÄÚÈÝ
 							size = size - BLK_SIZE;
 						}
 						disk.close();
-						cout << "ÎÄ¼þ´´½¨³É¹¦£¡";
+						cout << "  ÎÄ¼þ:"<<filename<<" ×·¼ÓÄÚÈÝ³É¹¦£¡";
 					}
 				}
 			}
 			else {
-				cout << "ÎÄ¼þÀàÐÍÊÇÎÄ¼þ¼Ð";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  ÎÄ¼þÀàÐÍÊÇdir£¬¶ø²»ÊÇfile";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			}
 		}
 
 	}
 	else {
-		cout << "Ã»ÓÐ²Ù×÷È¨ÏÞ";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  µ±Ç°ÓÃ»§Ã»ÓÐ²Ù×÷È¨ÏÞ";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	}
 	writeInode(inode, path[num - 1]);
 }
 
-void rmfile(char* filename) //É¾³ýÎÄ¼þ
+//É¾³ýÎÄ¼þ
+void rmfile(char* filename) 
 {
 	INODE inode, inode2;
 	DIR dir;
@@ -441,28 +727,36 @@ void rmfile(char* filename) //É¾³ýÎÄ¼þ
 					char tmpbuf[TIME_SIZE];
 					_strtime(tmpbuf);
 					strcpy(inode.ctime, tmpbuf);
-					cout << "ÎÄ¼þÒÑ³É¹¦É¾³ý£¡";
+					cout << "  ÎÄ¼þ:" << filename << " ÒÑ³É¹¦É¾³ý£¡";
 				}
 				else {
-					cout << "É¾³ýÄ¿Â¼Ó¦ÓÃrmdirÃüÁî£¡";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+					cout << "  É¾³ýÄ¿Â¼Ó¦¸ÃÊ¹ÓÃrmdirÃüÁî£¡";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				}
 			}
 			else {
-				cout << "Ã»ÓÐ²Ù×÷È¨ÏÞ£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  Ã»ÓÐ²Ù×÷È¨ÏÞ£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			}
 		}
 		else {
-			cout << "Ä¿Â¼ÖÐ²»´æÔÚ¸ÃÎÄ¼þ£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  Ä¿Â¼ÖÐ²»´æÔÚÄ¿±êÎÄ¼þ: " << filename << " £¡" << endl;
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 	}
 	else {
-		cout << "Ã»ÓÐ²Ù×÷È¨ÏÞ£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  Ã»ÓÐ²Ù×÷È¨ÏÞ£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	}
 	writesupblk();
 	writeInode(inode, path[num - 1]);
 }
-
-void copy(char* string) //¸´ÖÆÎÄ¼þ
+//¸´ÖÆÎÄ¼þ
+void copy(char* string) 
 {
 	bool getit = false;
 	char content[FILE_CONTENT_MAX_SIZE];
@@ -498,11 +792,15 @@ void copy(char* string) //¸´ÖÆÎÄ¼þ
 			disk.close();
 		}
 		else {
-			cout << "ÎÞ·¨¸ù¾ÝÏà¹ØÂ·¾¶ÕÒµ½ÎÄ¼þ£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  ÎÞ·¨¸ù¾ÝÏà¹ØÂ·¾¶:" << string << " ÕÒµ½ÎÄ¼þ:" << fname << " £¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 	}
 	else {
-		cout << "ÎÞ·¨¸ù¾ÝÏà¹ØÂ·¾¶ÕÒµ½ÎÄ¼þ£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  ÎÞ·¨¸ù¾ÝÏà¹ØÂ·¾¶:" << string << "ÕÒµ½ÎÄ¼þ:" << fname << " £¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	}
 	strcpy(curname, tcurname); //		»¹Ô­Â·¾¶
 	num = tnum;
@@ -510,12 +808,12 @@ void copy(char* string) //¸´ÖÆÎÄ¼þ
 		path[ii] = tpath[ii];
 	}
 	if (getit) {
-		mkfile(fname, content); //´´½¨ÐÂÎÄ¼þ
-		cout << "¸´ÖÆ³É¹¦" << curname << endl;
+		crtfileAuto(fname, content); //´´½¨ÐÂÎÄ¼þ
+		cout << "  ÎÄ¼þ: " << fname << " ¸´ÖÆ³É¹¦" << curname << endl;
 	}
 }
-
-void showcontent(char* filename) //ÏÔÊ¾ÎÄ¼þÄÚÈÝ
+//¸Ä//ÏÔÊ¾ÎÄ¼þÄÚÈÝ
+void show(char* filename) //ÏÔÊ¾ÎÄ¼þÄÚÈÝ
 {
 	INODE inode, inode2;
 	readInode(path[num - 1], inode);
@@ -523,7 +821,7 @@ void showcontent(char* filename) //ÏÔÊ¾ÎÄ¼þÄÚÈÝ
 	if (ISsame(filename, inode, i, index2)) {
 		readInode(index2, inode2);
 		if (inode2.mode[0] == 'f') {
-			cout << "ÎÄ¼þÄÚÈÝÎª£º\n";
+			cout << "  ÎÄ¼þÄÚÈÝÎª£º\n";
 			char content[512];
 			fstream disk;
 			disk.open("disk.txt", ios::in | ios::out);
@@ -535,15 +833,62 @@ void showcontent(char* filename) //ÏÔÊ¾ÎÄ¼þÄÚÈÝ
 			disk.close();
 		}
 		else {
-			cout << "ÏÔÊ¾Ê§°Ü£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  ÏÔÊ¾Ê§°Ü£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 	}
 	else {
-		cout << "Ä¿Â¼ÖÐ²»´æÔÚ¸ÃÎÄ¼þ£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  Ä¿Â¼ÖÐ²»´æÔÚÎÄ¼þ£º¡°" << filename << "¡±£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	}
 }
 
-bool ISsame(char* dirname, INODE inode, int& i, int& index2) //ÅÐ¶ÏÄ¿Â¼ÏîÊÇ·ñ´æÔÚ
+void shownew(char* filename) {
+	File file;
+	file = returnFile(filename);
+	cout << file.content;
+}
+//·µ»ØÎÄÕÂÄÚÈÝ
+File returnFile(char* filename) {
+	INODE inode, inode2;
+	File FileSet;
+	char totalContent[2049] = {'\0'};
+	readInode(path[num - 1], inode);
+	int i, index2;
+	if (ISsame(filename, inode, i, index2)) {
+		readInode(index2, inode2);
+		if (inode2.mode[0] == 'f') {
+			cout << "  ÎÄ¼þÄÚÈÝÎª£º\n";
+			char content[512];
+			fstream disk;
+			disk.open("disk.txt", ios::in | ios::out);
+			for (int i = 0; i < inode2.fbnum; i++) {
+				disk.seekg(inode2.addr[i] * BLK_SIZE_TOTAL);
+				disk >> content;
+				strcat(totalContent, content);
+			}
+			disk.close();
+		}
+		else {
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  ²»ÊÇÎÄ¼þÀàÐÍ£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+		}
+	}
+	else {
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  Ä¿Â¼ÖÐ²»´æÔÚÎÄ¼þ£º¡°" << filename << "¡±£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	}
+	FileSet.content = totalContent;
+	FileSet.size = inode2.fsize;
+	FileSet.ContentSize = strlen(totalContent);
+	return FileSet;
+}
+//ÅÐ¶ÏÄ¿Â¼ÏîÊÇ·ñ´æÔÚ
+bool ISsame(char* dirname, INODE inode, int& i, int& index2) 
 {
 	bool have = false;
 	char name[FILE_NAME_SIZE];
@@ -561,19 +906,23 @@ bool ISsame(char* dirname, INODE inode, int& i, int& index2) //ÅÐ¶ÏÄ¿Â¼ÏîÊÇ·ñ´æÔ
 	disk.close();
 	return have;
 }
-
-void mkdir(char* dirname) //´´½¨×ÓÄ¿Â¼
+//´´½¨×ÓÄ¿Â¼
+void mkdir(char* dirname, char* username) 
 {
 	INODE inode, inode2;
 	readInode(path[num - 1], inode);
 	if (authority(inode)) {
 		if (BLK_SIZE - inode.fsize < DIR_SIZE) {
-			cout << "Ä¿Â¼ÒÑÂú£¬ÎÞ·¨´´½¨×ÓÄ¿Â¼£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  Ä¿Â¼ÒÑÂú£¬ÎÞ·¨´´½¨×ÓÄ¿Â¼£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 		else {
 			int i, index2;
 			if (ISsame(dirname, inode, i, index2)) {
-				cout << "¸ÃÄ¿Â¼ÒÑ´æÔÚ£¬´´½¨Ê§°Ü£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  ¸ÃÄ¿Â¼ÒÑ´æÔÚ£¬´´½¨Ê§°Ü£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			}
 			else {
 				int iid = ialloc(); //ÉêÇë½Úµã
@@ -599,7 +948,7 @@ void mkdir(char* dirname) //´´½¨×ÓÄ¿Â¼
 							inode2.addr[aaa] = 0;
 						inode2.addr1 = 0;
 						inode2.addr2 = 0;
-						strcpy(inode2.ower, auser);
+						strcpy(inode2.ower, username);
 						strcpy(inode2.grouper, agroup);
 						strcpy(inode2.mode, "dir");
 						_strtime(tmpbuf);
@@ -616,32 +965,38 @@ void mkdir(char* dirname) //´´½¨×ÓÄ¿Â¼
 						disk << setw(BLK_NUM_SIZE) << 0;
 						disk << setw(BLK_NUM_SIZE) << 0;
 						disk << setw(BLK_NUM_SIZE) << 0;
-						disk << setw(USER_NAME_SIZE) << auser;
+						disk << setw(USER_NAME_SIZE) << username;
 						disk << setw(USER_GROUP_SIZE) << agroup;
 						disk << setw(FILE_MODE_SIZE + 1) << "dir";
 						_strtime(tmpbuf);
 						disk << setw(TIME_SIZE + 1) << tmpbuf;
 						disk.close();
-						cout << "Ä¿Â¼ÒÑ³É¹¦´´½¨£¡";
+						cout << "  Ä¿Â¼ÒÑ³É¹¦´´½¨£¡";
 					}
 					else {
 						ifree(iid);
-						cout << "ÎÞ¿ÕÏÐÅÌ¿é£¬´´½¨×ÓÄ¿Â¼Ê§°Ü£¡";
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+						cout << "  ÎÞ¿ÕÏÐÅÌ¿é£¬´´½¨×ÓÄ¿Â¼Ê§°Ü£¡";
+						SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 					}
 				}
 				else {
-					cout << "ÎÞ¿ÕÏÐ½Úµã£¬´´½¨×ÓÄ¿Â¼Ê§°Ü£¡";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+					cout << "  ÎÞ¿ÕÏÐ½Úµã£¬´´½¨×ÓÄ¿Â¼Ê§°Ü£¡";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				}
 			}
 		}
 	}
 	else {
-		cout << "Ã»ÓÐ´´½¨È¨ÏÞ£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  µ±Ç°µÇÂ½ÓÃ»§Ã»ÓÐ´´½¨È¨ÏÞ£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	}
 	writeInode(inode, path[num - 1]);
 	writesupblk();
 }
-
+//É¾³ýÄ¿Â¼
 void rmdir(char* dirname, int index) //É¾³ýÄ¿Â¼
 {
 	t++;
@@ -662,8 +1017,10 @@ void rmdir(char* dirname, int index) //É¾³ýÄ¿Â¼
 					{
 						char yes = 'y';
 						if (t == 1) {
-							cout << "¸ÃÄ¿Â¼·Ç¿Õ£¬½«É¾³ýÄ¿Â¼ÏÂµÄËùÓÐÎÄ¼þ£¬ÊÇ·ñ¼ÌÐø£¿(y/n):";
+							cout << "  ¸ÃÄ¿Â¼·Ç¿Õ£¬½«É¾³ýÄ¿Â¼ÏÂµÄËùÓÐÎÄ¼þ£¬ÊÇ·ñ¼ÌÐø£¿(y/n):";
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 							cin >> yes;
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 						}
 						if (('y' == yes) || ('Y' == yes)) {
 							char name[FILE_NAME_SIZE];
@@ -676,10 +1033,12 @@ void rmdir(char* dirname, int index) //É¾³ýÄ¿Â¼
 								disk >> name;
 								disk >> index3;
 								disk.close();
+
 								readInode(index3, inode3);
 								num++;
 								if (inode3.mode[0] == 'd') {
 									rmdir(name, index2);
+
 								}
 								else {
 									rmfile(name);
@@ -699,12 +1058,14 @@ void rmdir(char* dirname, int index) //É¾³ýÄ¿Â¼
 							}
 							inode.fsize -= DIR_SIZE;
 							char tmpbuf[TIME_SIZE];
-							_strtime(tmpbuf);
-							strcpy(inode.ctime, tmpbuf);
+							_strtime_s(tmpbuf);
+							strcpy_s(inode.ctime, tmpbuf);
 							//cout<<"Ä¿Â¼³É¹¦É¾³ý£¡";
 						}
 						else {
-							cout << "Ä¿Â¼É¾³ýÊ§°Ü£¡";
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+							cout << "  \nÄ¿Â¼É¾³ýÊ§°Ü£¡";
+							SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 						}
 					}
 					else //¿Õ
@@ -722,28 +1083,35 @@ void rmdir(char* dirname, int index) //É¾³ýÄ¿Â¼
 						}
 						inode.fsize -= DIR_SIZE;
 						char tmpbuf[TIME_SIZE];
-						_strtime(tmpbuf);
-						strcpy(inode.ctime, tmpbuf);
-						//cout<<"Ä¿Â¼³É¹¦É¾³ý£¡";
+						_strtime_s(tmpbuf);
+						strcpy_s(inode.ctime, tmpbuf);
+
+
 					}
 
-					cout << "Ä¿Â¼³É¹¦É¾³ý£¡";
+					cout << dirname << "Ä¿Â¼É¾³ýÍê±Ï£¡\n";
 
 				}
 				else {
-					cout << "ÎÄ¼þÓ¦ÓÃrmfileÃüÁîÉ¾³ý";
+					cout << "  ÎÄ¼þÓ¦ÓÃrmfileÃüÁîÉ¾³ý";
 				}
 			}
 			else {
-				cout << "Ã»ÓÐ²Ù×÷È¨ÏÞ£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  µ±Ç°µÇÂ½ÓÃ»§Ã»ÓÐ²Ù×÷È¨ÏÞ£¡";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			}
 		}
 		else {
-			cout << "Ä¿Â¼ÖÐ²»´æÔÚ¸Ã×ÓÄ¿Â¼£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  Ä¿Â¼ÖÐ²»´æÔÚ¸Ã×ÓÄ¿Â¼£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 	}
 	else {
-		cout << "Ã»ÓÐ²Ù×÷È¨ÏÞ£¡";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  µ±Ç°µÇÂ½ÓÃ»§Ã»ÓÐ²Ù×÷È¨ÏÞ£¡";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	}
 
 	writesupblk();
@@ -751,14 +1119,54 @@ void rmdir(char* dirname, int index) //É¾³ýÄ¿Â¼
 	t--;
 }
 
+//¼ÆËãÄ¿Â¼ÏîµÄ´óÐ¡
+int getlssize(INODE inode)
+{
+	int size = 0;
+	if (inode.mode[0] == 'd') {
+		if (inode.fsize != 0) {
+			//Ä¿Â¼ÏîÏÂÃæÓÐÄ¿Â¼
+			char name[FILE_NAME_SIZE];
+			int index1;
+			INODE inode1;
+			for (int ii = 0; ii < (inode.fsize / DIR_SIZE); ii++) {
+				fstream disk;
+				disk.open("disk.txt", ios::in | ios::out);
+				disk.seekg(inode.addr[0] * BLK_SIZE_TOTAL + DIR_SIZE * ii);
+				disk >> name;
+				disk >> index1;
+				disk.close();
+				readInode(index1, inode1);
+
+				if (inode1.mode[0] == 'd') {
+					size += getlssize(inode1);
+
+				}
+				else {  //ÊÇÎÄ¼þ
+					size += inode1.fsize;
+				}
+
+			}
+		}
+		return size;
+	}
+	else {
+		return inode.fsize;
+	}
+
+
+}
+//ÏÔÊ¾Ä¿Â¼
 void ls() //ÏÔÊ¾Ä¿Â¼
 {
 	INODE inode, inode2;
 	readInode(path[num - 1], inode);
 	char name[FILE_NAME_SIZE];
 	int index;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	cout << "===============================ÎÄ ¼þ ÁÐ ±í=======================================\n";
 	cout << setw(15) << "ÎÄ¼þÃû" << setw(6) << "´óÐ¡" << setw(8) << "ËùÓÐÕß" << " ";
-	cout << setw(6) << "ÓÃ»§×é" << setw(12) << "ÎÄ¼þÀàÐÍ" << setw(10) << "ÐÞ¸ÄÊ±¼ä" << endl;
+	cout << setw(6) << "ÓÃ»§×é" << setw(12) << "ÎÄ¼þÀàÐÍ" << setw(10) << "ÐÞ¸ÄÊ±¼ä" << endl<<endl;
 	for (int i = 0; i < (inode.fsize / DIR_SIZE); i++) {
 		fstream disk;
 		disk.open("disk.txt", ios::in | ios::out);
@@ -768,16 +1176,18 @@ void ls() //ÏÔÊ¾Ä¿Â¼
 		disk.close();
 		readInode(index, inode2);
 
-		cout << setw(15) << name << setw(6) << inode2.fsize << setw(8) << inode2.ower << " ";
+
+		cout << setw(15) << name << setw(6) << getlssize(inode2) << setw(8) << inode2.ower << " ";
 		cout << setw(6) << inode2.grouper << setw(12) << inode2.mode << setw(10) << inode2.ctime << endl;
 	}
-	cout << "ÏÔÊ¾Íê±Ï£¡";
-}
+	cout << "===============================ÏÔ Ê¾ Íê ±Ï=======================================\n";
 
-void cd(char* string) //Ìø×ªÄ¿Â¼
+}
+//Ìø×ªÄ¿Â¼
+void cd(char* string) 
 {
 	if (!strcmp(string, ".")) {
-		cout << "ÒÑÇÐ»»µ½µ±Ç°Ä¿Â¼£¡";
+		cout << "  ÒÑÇÐ»»µ½µ±Ç°Ä¿Â¼£¡";
 		return;
 	}
 	if (!strcmp(string, "/")) //Ìø×ªµ½¸ùÄ¿Â¼
@@ -785,7 +1195,7 @@ void cd(char* string) //Ìø×ªÄ¿Â¼
 		strcpy(curname, "root");
 		path[0] = 0;
 		num = 1;
-		cout << "ÒÑÇÐ»»µ½¸ùÄ¿Â¼£¡";
+		cout << "  ÒÑÇÐ»»µ½¸ùÄ¿Â¼£¡";
 		return;
 	}
 	if (!strcmp(string, "..")) //Ìø×ªµ½¸¸Ä¿Â¼,
@@ -801,10 +1211,10 @@ void cd(char* string) //Ìø×ªÄ¿Â¼
 			disk >> name;
 			disk.close();
 			strcpy(curname, name);
-			cout << "ÒÑÇÐ»»µ½¸¸Ä¿Â¼£¡" << curname << endl;
+			cout << "  ÒÑÇÐ»»µ½¸¸Ä¿Â¼£¡" << curname << endl;
 			return;
 		}
-		cout << "µ±Ç°ÒÑÊÇ¸ùÄ¿Â¼£¡";
+		cout << "  µ±Ç°ÒÑÊÇ¸ùÄ¿Â¼£¡";
 		return;
 	}
 	char* per = strchr(string, static_cast<int>('/')); //·µ»ØstringÖÐÊ×´Î³öÏÖ/µÄÎ»ÖÃ£¬Ã»ÓÐÔò·µ»Ø¿Õ
@@ -825,16 +1235,20 @@ void cd(char* string) //Ìø×ªÄ¿Â¼
 				strcpy(curname, name);
 				path[num] = index2;
 				num++;
-				cout << "ÒÑÇÐ»»µ½×ÓÄ¿Â¼£¡";
+				cout << "  ÒÑÇÐ»»µ½×ÓÄ¿Â¼£¡";
 				for (int i = 0; i < num; i++) {
 					cout << path[i];
 				}
 				return;
 			}
-			cout << "²»ÄÜ¸ù¾ÝÂ·¾¶ÕÒµ½Ïà¹ØÄ¿Â¼£¬ÒòÎª " << string << " Êý¾ÝÎÄ¼þ£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  ²»ÄÜ¸ù¾ÝÂ·¾¶ÕÒµ½Ïà¹ØÄ¿Â¼£¬ÒòÎª " << string << " Êý¾ÝÎÄ¼þ£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 		else {
-			cout << "¸Ã×ÓÄ¿Â¼²»´æÔÚ£¬²»ÄÜ¸ù¾ÝÂ·¾¶ÕÒµ½Ïà¹ØÄ¿Â¼";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  ¸Ã×ÓÄ¿Â¼²»´æÔÚ£¬²»ÄÜ¸ù¾ÝÂ·¾¶"<< string<< "ÕÒµ½Ïà¹ØÄ¿Â¼";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 	}
 	else {
@@ -849,11 +1263,13 @@ void cd(char* string) //Ìø×ªÄ¿Â¼
 			INODE inode;
 			readInode(path[num - 1], inode);
 			if (inode.mode[0] == 'd') {
-				cout << "ÒÑÇÐ»»µ½Ïà¹ØÄ¿Â¼";
+				cout << "  ÒÑÇÐ»»µ½Ïà¹ØÄ¿Â¼";
 				return;
 			}
 		}
-		cout << "²»ÄÜ¸ù¾ÝÂ·¾¶ÕÒµ½Ïà¹ØÄ¿Â¼"; //ÕÒ²»µ½Ä¿±ê£¬»¹Ô­
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  ²»ÄÜ¸ù¾ÝÂ·¾¶ÕÒµ½Ïà¹ØÄ¿Â¼"; //ÕÒ²»µ½Ä¿±ê£¬»¹Ô­
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		strcpy(curname, tcurname);
 		num = tnum;
 		for (int ii = 0; ii < tnum; ii++) {
@@ -861,16 +1277,19 @@ void cd(char* string) //Ìø×ªÄ¿Â¼
 		}
 	}
 }
-
-bool authority(INODE inode) //È¨ÏÞ¹ÜÀí
+//È¨ÏÞ¹ÜÀí
+bool authority(INODE inode) 
 {
-	if (agroup[0] == 's') {
+	if (!strcmp(auser, "admin")) {
+		return true;
+	}
+	if (!strcmp(agroup, "su") and !strcmp(auser, inode.ower)) {
 		return true;
 	}
 	return false;
 }
-
-bool find(char* string) //¸ù¾ÝÂ·¾¶ÕÒµ½Ö¸¶¨ÎÄ¼þ»òÄ¿Â¼
+//¸ù¾ÝÂ·¾¶ÕÒµ½Ö¸¶¨ÎÄ¼þ»òÄ¿Â¼
+bool find(char* string) 
 {
 	int ptr = 0;
 	char name[FILE_NAME_SIZE] = " ";
@@ -916,8 +1335,8 @@ bool find(char* string) //¸ù¾ÝÂ·¾¶ÕÒµ½Ö¸¶¨ÎÄ¼þ»òÄ¿Â¼
 	}
 	return false;
 }
-
-int getUserNum() //»ñÈ¡ÓÃ»§ÊýÁ¿
+//»ñÈ¡ÓÃ»§ÊýÁ¿
+int getUserNum() 
 {
 	char temp[8];
 	int usernum = 0;
@@ -933,15 +1352,17 @@ int getUserNum() //»ñÈ¡ÓÃ»§ÊýÁ¿
 	}
 	return usernum;
 }
-
-int signup() //×¢²á
+//ÓÎ¿Í×¢²á
+int guestSignup() 
 {
 	char auser2[8];
 	char auser_new[8];
 	char apwd1_new[8];
 
-	cout << "ÇëÊäÈëÐÂÓÎ¿ÍÓÃ»§Ãû:";
+	cout << "   ÁÙÊ±User:";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 	cin >> auser_new;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	fstream user;
 	user.open("user.txt", ios::in | ios::out);
 	int usernum = getUserNum(); //µ±Ç°ÓÃ»§ÊýÁ¿£¬°üÀ¨¹ÜÀíÔ±µÄÓÎ¿Í
@@ -949,13 +1370,17 @@ int signup() //×¢²á
 		user.seekg(8 + 24 * n);
 		user >> auser2;
 		if (strcmp(auser_new, auser2) == 0) {
-			cout << "ÓÃ»§ÃûÒÑ´æÔÚ" << endl;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  ÓÃ»§ÃûÒÑ´æÔÚ" << endl;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			user.close();
 			return 0;
 		}
 	}
-	cout << "ÇëÊäÈëÐÂÃÜÂë:";
+	cout << "  set password:";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 	cin >> apwd1_new;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	usernum++;
 	user.seekg(0);
 	user << setw(8) << usernum; //³õÊ¼»¯Ê±ÏÈÈ·¶¨ÓÃ»§¸öÊý
@@ -964,18 +1389,64 @@ int signup() //×¢²á
 	user << setw(8) << apwd1_new;
 	user << setw(8) << "guest";
 	user.close();
-	cout << "*************×¢²á³É¹¦*************" << endl;
+	cout << "  ÓÎ¿ÍÄ£Ê½Æô¶¯£¬welcome£¡" << endl;
 	return 1;
 }
+//ÓÃ»§×¢²á
+int userSignup() {
+	char auser2[8];
+	char auser_new[8];
+	char apwd1_new[8];
 
-int login() //µÇÂ¼
+	cout << "  admin User:";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+	cin >> auser_new;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	fstream user;
+	user.open("user.txt", ios::in | ios::out);
+	int usernum = getUserNum(); //µ±Ç°ÓÃ»§ÊýÁ¿£¬°üÀ¨¹ÜÀíÔ±ºÍÓÎ¿Í
+	for (int n = 0; n < usernum; n++) {
+		user.seekg(8 + 24 * n);
+		user >> auser2;
+		if (strcmp(auser_new, auser2) == 0) {
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << "  ÓÃ»§ÃûÒÑ´æÔÚ" << endl;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			user.close();
+			return 0;
+		}
+	}
+	cout << "  set Psaaword:";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+	cin >> apwd1_new;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	usernum++;
+	user.seekg(0);
+	user << setw(8) << usernum; //³õÊ¼»¯Ê±ÏÈÈ·¶¨ÓÃ»§¸öÊý
+	user.seekg(8 + 24 * (usernum - 1));
+	user << setw(8) << auser_new;
+	user << setw(8) << apwd1_new;
+	user << setw(8) << "su";
+	user.close();
+	mkdir(auser_new, auser_new);
+	cout << "\n   <-     ÒÑ×¢²áÐÂÓÃ»§" << auser_new << "    ->" << endl;
+	return 1;
+}
+//µÇÂ¼
+int login(char userword[]) 
 {
 	char auser2[8];
 	char apwd2[8];
-	cout << "ÇëÊäÈëÓÃ»§Ãû:";
-	cin >> auser;
-	cout << "ÇëÊäÈëÃÜÂë:";
+	/*
+	for (int i = 0; i < strlen(userword); i++) {
+		auser[i] = userword[i];
+	}*/
+	memset(auser, 0, sizeof(auser) / sizeof(char));
+	strcpy(auser ,userword);
+	cout << "   Password: ";
+	SetConsoleTextAttribute(handle, 0);
 	cin >> apwd;
+	SetConsoleTextAttribute(handle, 10);
 	bool have = false;
 	fstream user;
 	user.open("user.txt", ios::in);
@@ -990,7 +1461,10 @@ int login() //µÇÂ¼
 		if ((!a) && (!b)) {
 			have = true;
 			user >> agroup;
-			cout << agroup;
+			if (agroup == "su")
+			{
+				//cout << " --------------- Welcome, administrator---------------- ";
+			}
 			break;
 		}
 	}
@@ -999,76 +1473,95 @@ int login() //µÇÂ¼
 		return 1;
 	return 0;
 }
-
-void Order() //ÃüÁîº¯Êý
+//ÃüÁîº¯Êý
+void Order() 
 {
 	char commond[10];
 	bool have;
 	for (;;) {
 		have = false;
-		cout << "\n";
-		getPath(); //
-		cout << "$";
+		cout << "  \n";
+		getPath();
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+		cout << "$->  ";
 		cin >> commond;
 		if (!strcmp(commond, "cd")) {
 			have = true;
 			char string[100];
 			cin >> string;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			cd(string);
 		}
 		if (!strcmp(commond, "write")) {
 			have = true;
 			char filename[FILE_NAME_SIZE];
 			cin >> filename;
-			char content[2048];
-			cout << "ÇëÊäÈëÎÄ¼þÄÚÈÝ£º";
-			cin >> content;
-			write(filename, content);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			char content[2048] = { '\0' };
+			//write_new(filename, content);
+			writefile(filename, content);
 
 		}
 		if (!strcmp(commond, "mkdir")) {
 			have = true;
 			char dirname[FILE_NAME_SIZE];
 			cin >> dirname;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			mkdir(dirname);
 		}
 		if (!strcmp(commond, "rmdir")) {
 			have = true;
 			char dirname[FILE_NAME_SIZE];
 			cin >> dirname;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			rmdir(dirname, path[num - 1]);
 		}
-		if (!strcmp(commond, "mkfile")) {
+		if (!strcmp(commond, "crt")) {
 			have = true;
 			char filename[FILE_NAME_SIZE];
 			cin >> filename;
-			char content[2048];
-			cout << "ÇëÊäÈëÎÄ¼þÄÚÈÝ£º";
-			cin >> content;
-			mkfile(filename, content);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			char content[2048] = { '\0' };
+			crtfile(filename, content);
+
+		}
+		if (!strcmp(commond, "crta")) {
+			have = true;
+			char filename[FILE_NAME_SIZE];
+			cin >> filename;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			char content[2048] = { '\0' };
+			crtfileAutoloc(filename, content);
 
 		}
 		if (!strcmp(commond, "copy")) {
 			have = true;
 			char string[100];
 			cin >> string;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			copy(string);
 		}
 		if (!strcmp(commond, "rmfile")) {
 			have = true;
 			char filename[FILE_NAME_SIZE];
 			cin >> filename;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			rmfile(filename);
 		}
-		if (!strcmp(commond, "showcontent")) {
+		if (!strcmp(commond, "show")) {
 			have = true;
 			char filename[FILE_NAME_SIZE];
 			cin >> filename;
-			showcontent(filename);
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			shownew(filename);
+			//show(filename);
 		}
 		if (!strcmp(commond, "pwd")) {
 			have = true;
-			cout << "µ±Ç°Ä¿Â¼Îª£º" << curname;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			cout << "  µ±Ç°Ä¿Â¼Îª£º" << curname;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 		}
 		if (!strcmp(commond, "ls")) {
 			have = true;
@@ -1076,45 +1569,81 @@ void Order() //ÃüÁîº¯Êý
 		}
 		if (!strcmp(commond, "logout")) {
 			have = true;
-			cout << "ÕË»§" << auser << "ÒÑ×¢Ïú\n";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			cout << "  User " << auser << "log out\n";
 			int times = 0;
-			int in_up;
-			cout << "ÇëµÇÂ¼ÏµÍ³»ò×¢²á£º\n1£¬µÇÂ¼\n2£¬ÓÎ¿Í×¢²á" << endl;
+			char in_up[8] = {'\0'};
+			cout << "  ÈôÎÞÓÃ»§£¬ÊäÈë####½øÈëÓÎ¿ÍÄ£Ê½" << endl;
+			cout << "       User:";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 			cin >> in_up;
-			if (in_up == 2) {
-				while (!signup()) {
-					cout << "ÇëµÇÂ¼ÏµÍ³»ò×¢²á£º\n1£¬µÇÈë\n2£¬ÓÎ¿Í×¢²á" << endl;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			if (in_up == "####") {
+				while (!guestSignup()) {
+					cout << "  ÖØÐÂÊäÈë×¢²áÁÙÊ±User\nÒÑÓÐÕËºÅ£¬ÔòÊäÈë->login\n";
+					cout << "   user->";
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 					cin >> in_up;
-					if (in_up == 1) break;
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+					if (in_up == "login") break;
 				}
+				cout << "  <-LOGIN->" << endl;
+				cout << "       User:";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+				cin >> in_up;
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			}
-			while (!login())
-				cout << "wrong!!!\n";
-			cout << "login success!" << endl;
-			cout << "*******************Welcome " << auser << "*******************";
+
+			while (!login(in_up))
+			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+				cout << "  wrong! pls try again£¡\n";
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				cout << "       User:";
+				cin >> in_up;
+			}
+			cout << "  <-      Login success!    ->" << endl;
+			cout << "  Welcome " << auser << endl;
+		}
+		if (!strcmp(commond, "useradd")) {
+			have = true;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			userSignup();
 		}
 		if (!strcmp(commond, "reset")) {
 			have = true;
-			initial();
-			cout << "ÏµÍ³ÖØÖÃÍê³É£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			format();
+			cout << "  FOS »¹Ô­Ò»ÐÂ£¡";
 		}
 		if (!strcmp(commond, "help")) {
 			have = true;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 			Help();
 		}
+		if (!strcmp(commond, "order")) {
+			have = true;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			orderhelp();
+		}
+
 		if (!strcmp(commond, "exit")) {
 			have = true;
 			return;
 		}
 		if (have == false) {
-			cout << commond << " is not a legal command!!!";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+			cout << commond << "FOS cannot fand this order ! please try again£¡";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		}
 	}
 }
-
-void getPath() //»ñÈ¡Â·¾¶º¯Êý
+//»ñÈ¡Â·¾¶º¯Êý
+void getPath() 
 {
-	cout << "root";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+	cout << "  root";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 	INODE inode;
 	int nextindex;
 	char name[FILE_NAME_SIZE];
@@ -1126,21 +1655,23 @@ void getPath() //»ñÈ¡Â·¾¶º¯Êý
 		disk.open("disk.txt", ios::in | ios::out);
 		for (int j = 0; j < (inode.fsize / DIR_SIZE); j++) //dir´óÐ¡Îª36
 		{
-			disk.seekg((BLK_SIZE_TOTAL) * inode.addr[0] + DIR_SIZE * j); //\n¹Ê¶à³ö2
+			disk.seekg((BLK_SIZE_TOTAL)*inode.addr[0] + DIR_SIZE * j); //\n¹Ê¶à³ö2
 			disk >> name;
 			disk >> nextindex;
 			if (nextindex == path[i + 1]) //µÈ¾ÍÌøµ½ÏÂÒ»²ãµÄÒâË¼£¿pathÊý×éÖÐ´æµÄÊ²Ã´£¿£¿£¿
 			{
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 				cout << '/';
 				cout << name;
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 				break;
 			}
 		}
 		disk.close();
 	}
 }
-
-void initial() //³õÊ¼»¯
+//³õÊ¼»¯
+void format() 
 {
 	fstream user; //³õÊ¼»¯£»£»¶ÁÎÄ¼þÁ÷µ½userÖÐ£¬ÀûÓÃuserÊµÏÖ¶ÔÎÄ¼þµÄ¶ÁÐ´
 	user.open("user.txt", ios::in | ios::out);
@@ -1159,7 +1690,9 @@ void initial() //³õÊ¼»¯
 	disk.open("disk.txt", ios::in | ios::out);
 	if (!disk.is_open()) //¼ÓÁË.is_open()¼ì²éÎÄ¼þÊÇ·ñ´ò¿ª³É¹¦
 	{
-		cout << "Can't use the disk!\n";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  µ±Ç°´ÅÅÌ²»¿ÉÓÃ!\n";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 		exit(1);
 	}
 	for (i = 0; i < DISK_MAX_NUM; i++) {
@@ -1169,14 +1702,19 @@ void initial() //³õÊ¼»¯
 	disk.seekp(0);
 	//¸Ä±ä¶ÁÈëÎ»ÖÃf.seekg(0, ios::beg); Ò»²ÎÊýÆ«ÒÆÁ¿offset(long£©¶þ²ÎÊýoffsetÏà¶ÔÎ»ÖÃ£¬Èý¸öÖµ£º  ios::beg -- ÎÄ¼þÍ·    ios::end -- ÎÄ¼þÎ²    ios::cur -- µ±Ç°Î»ÖÃ
 	disk << setw(INODE_NUM_SIZE) << -1; //µÚÒ»¸öi½Úµã¸ø¸ùÄ¿Â¼Ê¹ÓÃ
+	superblock.fistack[0] = -1;
 	for (i = 1; i < FREE_INODE_MAX_NUM; i++) {
 		disk << setw(INODE_NUM_SIZE) << i;
+		superblock.fistack[i] = i;
 	}
 	disk << setw(INODE_NUM_SIZE) << FREE_INODE_MAX_NUM - 1;
+	superblock.fiptr = FREE_INODE_MAX_NUM - 1;
 	for (i = 0; i < 10; i++) {
 		disk << setw(BLK_NUM_SIZE) << i + 12;
+		superblock.fbstack[i] = i + 12;
 	}
 	disk << setw(BLK_NUM_SIZE) << 10; //×éÄÚ¿ÕÏÐÅÌ¿éÊý
+	superblock.fbptr = 10;
 	disk << setw(BLK_NUM_SIZE) << 80; //×Ü¿ÕÏÐi½ÚµãÊý
 	disk << setw(BLK_NUM_SIZE) << 89; //×Ü¿ÕÏÐÅÌ¿éÊý
 	//³õÊ¼»¯¸ùÄ¿Â¼i½Úµã
@@ -1210,79 +1748,117 @@ void initial() //³õÊ¼»¯
 	disk << setw(BLK_NUM_SIZE) << 0;
 	disk.close();
 }
+void orderhelp()
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+	cout << "\n               <--     Order List      -->\n";
+	cout << "---------------------------------------------------------\n";
+	cout << "      1.mkdir--------------½¨Á¢Ä¿Â¼\n";
+	cout << "      2.rmdir--------------É¾³ýÄ¿Â¼\n";
+	cout << "      3.cd-----------------¸Ä±äµ±Ç°Ä¿Â¼\n";
+	cout << "      4.ls-----------------ÏÔÊ¾µ±Ç°Ä¿Â¼ÖÐµÄ×ÓÄ¿Â¼ºÍÎÄ¼þ\n";
+	cout << "      5.pwd----------------ÏÔÊ¾µ±Ç°Ä¿Â¼\n";
+	cout << "      6.crt----------------½¨Á¢ÎÄ¼þ\n";
+	cout << "      7.crta---------------½¨Á¢(auto)ÎÄ¼þ\n";
+	cout << "      8.rmfile-------------É¾³ýÎÄ¼þ\n";
+	cout << "      9.write--------------×·¼ÓÎÄ¼þ\n";
+	cout << "      10.copy--------------¸´ÖÆÎÄ¼þ\n";
+	cout << "      11.show--------------ÏÔÊ¾ÎÄ¼þÄÚÈÝ\n";
+	cout << "      12.reset-------------ÏµÍ³ÖØÖÃ\n";
+	cout << "      13.logout------------×¢ÏúµÇÂ¼\n";
+	cout << "      14.useradd-----------´´½¨¹ÜÀíÔ±\n";
+	cout << "      16.order-------------ÏÔÊ¾ÃüÁî±íÄÚÈÝ\n";
+	cout << "      16.help--------------ÏÔÊ¾°ïÖúÄÚÈÝ\n";
+	cout << "      17.exit--------------ÍË³öÏµÍ³\n";
+	cout << "-------------------------------------------------------\n";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+}
 
-void Help() //helpº¯Êý
+//helpº¯Êý
+void Help() 
 {
 
-	cout << "1.mkdir£ºmkdir+¿Õ¸ñ+Ä¿Â¼Ãû£¬Èç\"mkdir d1\",ÔÚµ±Ç°Ä¿Â¼½¨Á¢×ÓÄ¿Â¼d1\n\n";
-	cout << "2.rmdir£ºrmdir+¿Õ¸ñ+Ä¿Â¼Ãû£¬Èç\"rmdir d1\",É¾³ýÄ¿Â¼d1\n\n";
-	cout << "3.cdÓÃ·¨:3.1£ºcd+¿Õ¸ñ+Ä¿Â¼Ãû£¬Èç \"cd d1\" ¡ª¡ªÌø×ªµ½µ±Ç°Ä¿Â¼µÄ×ÓÄ¿Â¼d1\n";
-	cout << "         3.2£ºcd+¿Õ¸ñ+Á½µã£¬Èç\"cd ..\" ¡ª¡ªÌø×ªµ½¸¸Ä¿Â¼\n";
-	cout << "         3.3£ºcd+¿Õ¸ñ+Ð±¸Ü£¬Èç\"cd /\" ¡ª¡ªÌø×ªµ½¸ùÄ¿Â¼\n";
-	cout << "         3.4£ºcd+¿Õ¸ñ+Â·¾¶£¬Èç \"cd root/d1/d2\" ¡ª¡ªÌø×ªµ½d2\n";
-	cout << "         3.5£ºcd+¿Õ¸ñ+µãºÅ£¬Èç \"cd .\" Ìø×ªµ½¸ùÄ¿Â¼\n\n";
-	cout << "4.ls£ºÖ±½ÓÊ¹ÓÃ,Èç\"ls\"ÏÔÊ¾µ±Ç°Ä¿Â¼ÖÐµÄ×ÓÄ¿Â¼ºÍÎÄ¼þ \n\n";
-	cout << "5.pwd£ºÖ±½ÓÊ¹ÓÃ,Èç\"pwd\"ÏÔÊ¾µ±Ç°Ä¿Â¼ \n\n";
-	cout << "6.mkfile£ºmkfile+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"mkfile f1\",ÔÚµ±Ç°Ä¿Â¼ÏÂ½¨Á¢ÎÄ¼þf1\n\n";
-	cout << "7.rmfile£ºrmfile+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"rmfile f1\",É¾³ýµ±Ç°Ä¿Â¼ÏÂµÄÎÄ¼þf1\n\n";
-	cout << "8.write: write+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"write f1\",ÔÚÎÄ¼þf1ÄÚÈÝºó¼ÌÐøÌí¼ÓÎÄ×Ö\n\n";
-	cout << "9.copy: copy+¿Õ¸ñ+Â·¾¶£¬Èç\"copy root\\d1\\f1\",ÔÚµ±Ç°Ä¿Â¼ÏÂ½¨Á¢ÓëÎÄ¼þf1ÏàÍ¬µÄÎÄ¼þ\n\n";
-	cout << "10.showcontent£ºshowcontent+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"showcontent f1\",ÏÔÊ¾ÎÄ¼þf1µÄÄÚÈÝ\n\n";
-	cout << "11.logout: Ö±½ÓÊ¹ÓÃ£¬ÍË³öµ±Ç°ÕË»§\n\n";
-	cout << "12.reset£ºÖ±½ÓÊ¹ÓÃ£¬¹¦ÄÜÊÇ½«ÏµÍ³ÖØÖÃµ½³õÊ¼×´Ì¬\n\n";
-	cout << "13.help: Ö±½ÓÊ¹ÓÃ£¬¹¦ÄÜÊÇ²é¿´Ã¿¸öÃüÁîÏêÏ¸Ê¹ÓÃ·½·¨\n\n";
-	cout << "14.exit: Ö±½ÓÊ¹ÓÃ£¬¹¦ÄÜÊÇÍË³öÏµÍ³\n";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+	cout << "    <--     Help documentation      -->\n";
+	cout << "  1.mkdir£ºmkdir+¿Õ¸ñ+Ä¿Â¼Ãû£¬Èç\"mkdir d1\",ÔÚµ±Ç°Ä¿Â¼½¨Á¢×ÓÄ¿Â¼d1\n\n";
+	cout << "  2.rmdir£ºrmdir+¿Õ¸ñ+Ä¿Â¼Ãû£¬Èç\"rmdir d1\",É¾³ýÄ¿Â¼d1\n\n";
+	cout << "  3.cdÓÃ·¨:3.1£ºcd+¿Õ¸ñ+Ä¿Â¼Ãû£¬Èç \"cd d1\" ¡ª¡ªÌø×ªµ½µ±Ç°Ä¿Â¼µÄ×ÓÄ¿Â¼d1\n";
+	cout << "           3.2£ºcd+¿Õ¸ñ+Á½µã£¬Èç\"cd ..\" ¡ª¡ªÌø×ªµ½¸¸Ä¿Â¼\n";
+	cout << "           3.3£ºcd+¿Õ¸ñ+Ð±¸Ü£¬Èç\"cd /\" ¡ª¡ªÌø×ªµ½¸ùÄ¿Â¼\n";
+	cout << "           3.4£ºcd+¿Õ¸ñ+Â·¾¶£¬Èç \"cd root/d1/d2\" ¡ª¡ªÌø×ªµ½d2\n";
+	cout << "           3.5£ºcd+¿Õ¸ñ+µãºÅ£¬Èç \"cd .\" Ìø×ªµ½¸ùÄ¿Â¼\n\n";
+	cout << "  4.ls£ºÖ±½ÓÊ¹ÓÃ,Èç\"ls\"ÏÔÊ¾µ±Ç°Ä¿Â¼ÖÐµÄ×ÓÄ¿Â¼ºÍÎÄ¼þ \n\n";
+	cout << "  5.pwd£ºÖ±½ÓÊ¹ÓÃ,Èç\"pwd\"ÏÔÊ¾µ±Ç°Ä¿Â¼ \n\n";
+	cout << "  6.crt£ºcrt+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"crt f1\",ÔÚµ±Ç°Ä¿Â¼ÏÂ½¨Á¢ÎÄ¼þf1£¬ÊÖ¶¯Ìí¼ÓÎÄ¼þ´óÐ¡\n\n";
+	cout << "  7.crta£ºcrta+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"crta f1\",ÔÚµ±Ç°Ä¿Â¼ÏÂ½¨Á¢ÎÄ¼þf1,×Ô¶¯Æ¥ÅäÊäÈë´óÐ¡\n\n";
+	cout << "  8.rmfile£ºrmfile+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"rmfile f1\",É¾³ýµ±Ç°Ä¿Â¼ÏÂµÄÎÄ¼þf1\n\n";
+	cout << "  9.write: write+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"write f1\",ÔÚÎÄ¼þf1ÄÚÈÝºó¼ÌÐøÌí¼ÓÎÄ×Ö\n\n";
+	cout << "  10.copy: copy+¿Õ¸ñ+Â·¾¶£¬Èç\"copy root\\d1\\f1\",ÔÚµ±Ç°Ä¿Â¼ÏÂ½¨Á¢ÓëÎÄ¼þf1ÏàÍ¬µÄÎÄ¼þ\n\n";
+	cout << "  11.show£ºshow+¿Õ¸ñ+ÎÄ¼þÃû£¬Èç\"show f1\",ÏÔÊ¾ÎÄ¼þf1µÄÄÚÈÝ\n\n";
+	cout << "  12.logout: Ö±½ÓÊ¹ÓÃ£¬ÍË³öµ±Ç°ÕË»§\n\n";
+	cout << "  13.reset£ºÖ±½ÓÊ¹ÓÃ£¬¹¦ÄÜÊÇ½«ÏµÍ³ÖØÖÃµ½³õÊ¼×´Ì¬\n\n";
+	cout << "  14.useradd£ºÖ±½ÓÊ¹ÓÃ£¬¹¦ÄÜÊÇ´´½¨ÐÂ¹ÜÀíÔ±\n\n";
+	cout << "  15.order: Ö±½ÓÊ¹ÓÃ£¬¹¦ÄÜÊÇ²é¿´ÏµÍ³ÃüÁî\n\n";
+	cout << "  16.help: Ö±½ÓÊ¹ÓÃ£¬¹¦ÄÜÊÇ²é¿´Ã¿¸öÃüÁîÏêÏ¸Ê¹ÓÃ·½·¨\n\n";
+	cout << "  17.exit: Ö±½ÓÊ¹ÓÃ£¬¹¦ÄÜÊÇÍË³öÏµÍ³\n";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+}
+
+void UI() {
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 11);
+	cout << "  This is File Operating System  "<<endl;
+	cout << "       No one's life would have been perfect, but no matter what,"
+		<< endl << "     we must look forward, hopefully will be invincible." << endl;
+	cout << endl << endl;
+	int times = 0;
+	char in_up[8] = {'\0'};
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	cout << "  ÈôÎÞÓÃ»§£¬ÊäÈë####½øÈëÓÎ¿ÍÄ£Ê½" << endl;
+	cout << "       User:";
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+	cin >> in_up;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	if (in_up == "####") {
+		while (!guestSignup()) {
+			cout << "  ÖØÐÂÊäÈë×¢²áÁÙÊ±User\nÒÑÓÐÕËºÅ£¬ÔòÊäÈë->login\n";
+			cout << "   user->";
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+			cin >> in_up;
+			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+			if (in_up == "login") break;
+		}
+		cout << "  <-    LOGIN    ->" << endl;
+		cout << "       User:";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+		cin >> in_up;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+	}
+
+	while (!login(in_up))
+	{
+		times++;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
+		cout << "  ÓÃ»§Ãû»òÃÜÂë²»ÕýÈ·!\n  ÇëÖØÐÂÊäÈë£¡Í¬Ê±£¬Äã¿ÉÒÔÊäÈë¡°exitos¡±ÍË³ö³ÌÐò\n";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+		cout << "       User:";
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+		cin >> in_up;
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+		if (in_up == "exitos") exit(0);
+	}
+	cout << "  <-      Login success!    ->" << endl;
+	cout << "  Welcome " << auser << endl;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 14);
+	cout << "  Äã¿ÉÒÔÍ¨¹ý-order -help Ö¸Áî»ñµÃÖ¸ÁîÐÅÏ¢ÓëÊ¹ÓÃ·½·¨->" << endl;
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 }
 
 int main() {
-	int in_up;
-	cout << "ÊÇ·ñFormat:(y/n)?" << endl;
-	char formate;
-	cin >> formate;
-	if ((formate == 'y') || (formate == 'Y')) {
-		initial();
-	}
-	strcpy(curname, "root");
-	path[0] = 0;
-	num = 1;
-	int times = 0;
-	cout << "ÇëµÇÂ¼ÏµÍ³»ò×¢²á£º\n1£¬µÇÂ¼\n2£¬ÓÎ¿Í×¢²á" << endl;
-	cin >> in_up;
-	if (in_up == 2) {
-		while (!signup()) {
-			cout << "ÇëµÇÂ¼ÏµÍ³»ò×¢²á£º\n1£¬µÇÂ¼\n2£¬ÓÎ¿Í×¢²á" << endl;
-			cin >> in_up;
-			if (in_up == 1) break;
-		}
-	}
-	while (!login()) {
-		times++;
-		if (times >= 3) {
-			cout << "¶à´ÎÊäÈëµÄÓÃ»§ÃûºÍ¿ÚÁî²»·û£¬µÇÂ¼Ê§°Ü!\n";
-			exit(0);
-		}
-		cout << "ÓÃ»§Ãû»òÃÜÂë´íÎó!!!\n";
-	}
-	cout << "¹§Ï²Äã£¬µÇÂ¼³É¹¦!\n";
-	cout << "********************File System " << auser << "***************" << endl;
-	cout << "---------------------Order List---------------------\n";
-	cout << "1.mkdir-----------½¨Á¢Ä¿Â¼\n";
-	cout << "2.rmdir-----------É¾³ýÄ¿Â¼\n";
-	cout << "3.cd--------------¸Ä±äµ±Ç°Ä¿Â¼\n";
-	cout << "4.ls--------------ÏÔÊ¾µ±Ç°Ä¿Â¼ÖÐµÄ×ÓÄ¿Â¼ºÍÎÄ¼þ\n";
-	cout << "5.pwd----------------ÏÔÊ¾µ±Ç°Ä¿Â¼\n";
-	cout << "6.mkfile--------------½¨Á¢ÎÄ¼þ\n";
-	cout << "7.rmfile--------------É¾³ýÎÄ¼þ\n";
-	cout << "8.write--------------×·¼ÓÎÄ¼þ\n";
-	cout << "9.copy--------------¸´ÖÆÎÄ¼þ\n";
-	cout << "10.showcontent-------------ÏÔÊ¾ÎÄ¼þÄÚÈÝ\n";
-	cout << "11.reset-----------ÏµÍ³ÖØÖÃ\n";
-	cout << "12.logout---------×¢ÏúµÇÂ¼\n";
-	cout << "13.help-----------ÏÔÊ¾°ïÖúÄÚÈÝ\n";
-	cout << "14.exit-----------ÍË³öÏµÍ³\n";
-	cout << "----------------------------------------------------\n";
+	initVariable();
+	UI();
 	readsupblk();
 	Order();
 	writesupblk();
 	return 0;
 }
+

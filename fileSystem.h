@@ -5,6 +5,8 @@
 #include<ctime>
 #include<fstream>
 #include<iomanip>
+#include "File.h"
+#include <Windows.h>
 using namespace std;
 
 #define DISK_MAX_NUM 100	//总磁盘块数100
@@ -15,7 +17,7 @@ using namespace std;
 #define INODE_SIZE 64	//i节点大小64B
 #define INODE_NUM_SIZE 3	//i节点编号长度3
 #define INODE_BLK_NUM 10	//i节点占磁盘块数10块
-#define DIR_SIZE 36			//每个目录的大小为36B
+#define DIR_SIZE 36			//每个目录项的大小为36B
 #define FREE_BLK_MAX_NUM (DISK_MAX_NUM - 2 - INODE_BLK_NUM)		//最大空闲磁盘块数(100-2-10)=88块
 #define FREE_INODE_MAX_NUM ((INODE_BLK_NUM * BLK_SIZE) / INODE_SIZE)	//最大空闲i节点个数 (10*512)/64=80个
 #define DIRECT_ADR_NUM 4	//直接寻址地址位个数
@@ -60,8 +62,22 @@ struct DIR              //36B
 	int parindex;		//父目录节点号,4B
 };
 
+
+int path[20];
+int num = 1;	//当前目录层数
+int t = 0;
+char auser[8];
+char apwd[8];
+char agroup[8];
+char curname[9];
+SUPERBLOCK superblock;
+
+HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);  // 获取控制台句柄
+
+
+void initVariable(); //初始化变量
 void Order();  //命令函数
-void initial();  //初始化
+void format();  //初始化
 void getPath();  //获取路径
 void Help();  //帮助
 int ialloc();		//申请i节点
@@ -75,26 +91,27 @@ void writesupblk();		//写超级块
 void rmdir(char* dirname, int index);  //删除目录
 void readdir(INODE inode, int index, DIR& dir);	//读目录
 void writedir(INODE inode, DIR dir, int index);		//写目录
-void mkfile(char* dirname, char* content);  //创建文件
+void crtfile(char* dirname, char* content);  //创建文件
+void crtfileAuto(char* filename, char* content);//自动创建
+void crtfileAutoloc(char* filename, char* content);
 void rmfile(char* filename);  //删除文件
-void showcontent(char* filename);	//显示文件内容
-void write();//写文件
+void show(char* filename);	//显示文件内容
+void writefile(char* filename, char* content);//写文件
 void copy(char* string);		//复制文件
-int login();  //登录
+int login(char userword[]);  //登录
+int guestSignup(); //游客注册
+int userSignup(); //管理员注册
 int getUserNum();//获取用户数
 bool authority(INODE inode);  //权限管理
 bool ISsame(char* dirname, INODE inode, int& i, int& index2);	//判断目录项是否已创建
 bool find(char* string);	//根据路径找到指定文件或目录
-void mkdir(char* dirname);	//创建子目录
+void mkdir(char* dirname, char* username = auser);	//创建子目录
 void ls();	//显示目录
 void cd(char* string);	//跳转目录
+File returnFile(char* filename);//返回文章内容
+int getlssize(INODE inode);//计算目录项的大小
+void shownew(char* filename);
+void UI();//界面函数
+void orderhelp();//命令行显示函数
 
 
-int path[20];
-int num = 1;	//当前目录层数
-int t = 0;
-char auser[8];
-char apwd[8];
-char agroup[8];
-char curname[9];
-SUPERBLOCK superblock;
